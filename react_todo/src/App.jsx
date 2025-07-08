@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { use, useEffect, useRef, useState } from 'react';
 import './App.css';
 
 function App() {
@@ -11,13 +11,49 @@ function App() {
 
   return (
     <>
+      <Advice />
+      <Clock />
       <Timer />
+      <StopWatch />
       <TodoInput setTodo={setTodo} />
       <TodoList todo={todo} setTodo={setTodo} />
     </>
   );
 }
 
+const useFetch = (url) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    fetch(url)
+      .then((res) => res.json())
+      .then((res) => {
+        setData(res);
+        setIsLoading(false);
+      });
+  }, [url]);
+  return [isLoading, data];
+};
+
+//랜덤명언
+const Advice = () => {
+  const [isLoading, data] = useFetch(
+    'https://korean-advice-open-api.vercel.app/api/advice'
+  );
+  return (
+    <>
+      {!isLoading && (
+        <>
+          <div>{data.message}</div>
+          <div>-{data.author}-</div>
+        </>
+      )}
+    </>
+  );
+};
+
+// 현재시간
 const Clock = () => {
   const [time, setTime] = useState(new Date());
 
@@ -30,6 +66,7 @@ const Clock = () => {
   return <div>{time.toLocaleTimeString()}</div>;
 };
 
+// 시간 표시방법
 const formatTime = (seconds) => {
   const timeString = `${String(Math.floor(seconds / 3600)).padStart(2, '0')}:
     ${String(Math.floor((seconds % 3600) / 60)).padStart(2, '0')}:
@@ -37,6 +74,7 @@ const formatTime = (seconds) => {
   return timeString;
 };
 
+//스톱워치
 const StopWatch = () => {
   const [time, setTime] = useState(0);
   const [isOn, setIsOn] = useState(false);
@@ -71,6 +109,7 @@ const StopWatch = () => {
   );
 };
 
+//타이머
 const Timer = () => {
   const [startTime, setStartTime] = useState(0);
   const [isOn, setIsOn] = useState(false);
@@ -128,6 +167,7 @@ const Timer = () => {
   );
 };
 
+//'todolist'
 const TodoInput = ({ setTodo }) => {
   const inputRef = useRef(null);
   const addTodo = () => {
