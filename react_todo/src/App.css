@@ -57,5 +57,5 @@ li > div:last-child {
   padding: 0 40px;
 }
 .current {
-  background-color: rgb(230, 234, 255);
+  background-color: violet;
 }
